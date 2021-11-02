@@ -28,3 +28,23 @@ cd oa-manager && npm run serve
 git add .  && git commit -m "初始化项目"  && git push
 ```
 
+## 二、插件安装
+
+### 2.1 安装element-ui
+
+```
+npm install element-ui --save
+```
+
+### 2.2 安装axios
+
+```
+npm install axios --save
+```
+
+### 2.3 将项目初始化的代码提交到GIT仓库
+
+```
+git add .  && git commit -m "插件安装"  && git push
+```
+
