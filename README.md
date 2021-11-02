@@ -108,11 +108,13 @@ git add .  && git commit -m "插件安装"  && git push
 
 ## 四、环境配置
 
-#### 4.1 在config/index.js文件内对环境进行封装
+### 4.1 在config/index.js文件内对环境进行封装
 
 ```javascript
 /*config/index.js*/
-
+/**
+*	环境配置封装
+**/
 const env = import.meta.env.MODE || "prod";
 
 const EnvConfig = {
@@ -144,6 +146,113 @@ export default {
 ### 4.2 将环境配置的代码提交到GIT仓库
 
 ```
-git add .  && git commit -m "插件安装"  && git push
+git add .  && git commit -m "环境配置"  && git push
+```
+
+## 五、axios二次封装
+
+### 5.1 在utils文件夹内创建request.js文件
+
+### 5.2 在request.js文件内对axios进行二次封装
+
+```javascript
+/**
+*	axios二次封装
+*/
+
+//1. 引入axios
+import axios from "axios"
+
+//2. 引入环境变量配置文件
+import config from "../config/index.js"
+
+//6. 引入element-ui的message组件
+import { Message } from 'element-ui';
+
+//7. 自定义错误状态码提示信息
+const TOKEN_INVALID = "TOKEN认证失败,请重新登录"
+
+//8. 导入路由对象
+import router from "../router"
+
+//9. 定义网络错误提示信息
+const NETWORK_ERROR = "网络请求异常,请稍后重试" 
+
+//3. 创建axios实例对象,添加全局请求配置
+const service = axios.create({
+  //设置请求的公共接口地址
+  baseURL : config.baseApi
+  //设置请求超时时间
+  timeout : 8000
+})
+
+//4. 创建请求拦截器
+service.interceptors.request.use((req)=>{
+  const headers = req.headers;
+  if(!headers.Authorization) headers.Authorization = "要发送的token"
+  return req;
+})
+
+//5. 创建响应拦截器
+service.interceptors.response.use((res)=>{
+  const {code,data,msg} = res.data;
+  if(code === 200){
+     return data;
+  }else if(code === 40001){
+    	Message.error(TOKEN_INVALID);
+    	setTimeout(()=>{
+        router.push("/login");
+      },1500)
+    	return Promise.reject(TOKEN_INVALID);
+  }else{
+    	Message.error(msg || NETWORK_ERROR)
+    	return Promise.reject(msg || NETWORK_ERROR)
+  }
+})
+
+//10. 定义请求核心函数
+function request(options){
+  options.method = options.method || "get";
+  
+  if(options.method.toLowerCase() == "get"){
+     options.params = options.data;
+  }
+  
+  if(config.env === "prod"){
+     service.defaults.baseURL = config.baseApi
+  }else{
+     service.defaults.baseURL = config.mock ? config.mockApi : config.baseApi
+  }
+  
+  return service(options)
+}
+
+//12. 处理使用this.request.get/post/put/delete/patch这几种请求方法
+/*
+	this.$request.get("/login",{name : "jack"},{mock:true, loading : true}).then(res=>{
+		console.log(res)
+	})
+*/
+
+["get","post","put","delete","patch"].forEach((item)=>{
+  request[item] = (url,data,options)=>{
+    return request({
+      url,
+      data,
+      method : item,
+      ...options
+    })
+  }
+})
+
+//11. 导出请求方法
+export default request;
+
+```
+
+### 5.3 将axios二次封装的代码提交到GIT仓库
+
+```
+git add .  && git commit -m "axios二次封装"  && git push
 ```
 
