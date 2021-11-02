@@ -256,3 +256,91 @@ export default request;
 git add .  && git commit -m "axios二次封装"  && git push
 ```
 
+## 六、storage二次封装
+
+### 6.1 在utils文件夹内创建storage.js文件
+
+### 6.2 在config/index.js文件内创建存储的命名空间
+
+```javascript
+const env = import.meta.env.MODE || "prod";
+
+const EnvConfig = {
+
+	dev : {
+		baseApi : "/",
+		mockApi : "https://www.fastmock.site/mock/76ef040b1066810a6a9e8b7cf636e63d/oa",
+	},
+	
+	test : {
+		baseApi : "//test.futurefe.com/api",
+		mockApi : "https://www.fastmock.site/mock/76ef040b1066810a6a9e8b7cf636e63d/oa",
+	},
+	
+	prod : {
+		baseApi : "//futurefe.com/api",
+		mockApi : "https://www.fastmock.site/mock/76ef040b1066810a6a9e8b7cf636e63d/oa",
+	}
+
+}
+
+export default {
+	env,
+	mock : true,
+	//定义本地存储的命名空间
+	namespace : "manage",
+	...EnvConfig[env]
+}
+```
+
+### 6.3 在storage.js文件内对本地存储进行封装
+
+```javascript
+/*utils/storage*/
+
+/***
+* Storage二次封装
+*/
+//1. 在config/index.js文件内创建存储的命名空间 "namespace" : "manage",在storage.js文件内引入config/index.js
+
+import config from "../config/index.js"
+
+
+
+//2. 封装storage
+export default {
+  setItem(key,val){
+    let storage = this.getStorage();
+    storage[key] = val;
+    window.localstorage.setItem(config.namespace,JSON.stringify(storage));
+  },
+  getItem(key){
+    return this.getStorage()[key];
+  },
+  getStorage(){
+    return JSON.parse(window.localstorage.getItem(config.namespace) || "{}");
+  },
+  clearItem(key){
+    let storage = this.getStorage();
+    delete storage[key];
+    window.localstorage.setItem(config.namespace,JSON.stringify(storage));
+  },
+  clearAll(){
+    window.localstorage.clear()
+  }
+}
+```
+
+### 6.4 将storage二次封装的代码提交到GIT仓库
+
+```
+git add .  && git commit -m "storage二次封装"  && git push
+```
+
+
+
+## 七、用户登录布局开发
+
+## 八、用户登录交互开发
+
+## 九、用户登录后台开发
