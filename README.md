@@ -76,11 +76,11 @@ vue.config.js			覆盖webpack底层配置文件
 package-lock.json		锁定项目依赖版本号配置文件
 ```
 
-### 3.2 创建对象项目目录结构
+### 3.2 创建对应项目目录结构
 
 ### 3.3 vue.confjg.js基础配置
 
-```
+```javascript
 module.exports = {
 	//配置vue项目打包白屏问题
 	publicPath : "./",
@@ -108,9 +108,9 @@ git add .  && git commit -m "插件安装"  && git push
 
 ## 四、环境配置
 
-#### 4.1 
+#### 4.1 在config/index.js文件内对环境进行封装
 
-```
+```javascript
 /*config/index.js*/
 
 const env = import.meta.env.MODE || "prod";
@@ -119,17 +119,17 @@ const EnvConfig = {
 
 	dev : {
 		baseApi : "/",
-		mockApi : "",
+		mockApi : "https://www.fastmock.site/mock/76ef040b1066810a6a9e8b7cf636e63d/oa",
 	},
 	
 	test : {
 		baseApi : "//test.futurefe.com/api",
-		mockApi : "",
+		mockApi : "https://www.fastmock.site/mock/76ef040b1066810a6a9e8b7cf636e63d/oa",
 	},
 	
 	prod : {
 		baseApi : "//futurefe.com/api",
-		mockApi : "",
+		mockApi : "https://www.fastmock.site/mock/76ef040b1066810a6a9e8b7cf636e63d/oa",
 	}
 
 }
@@ -139,5 +139,11 @@ export default {
 	mock : true,
 	...EnvConfig[env]
 }
+```
+
+### 4.2 将环境配置的代码提交到GIT仓库
+
+```
+git add .  && git commit -m "插件安装"  && git push
 ```
 
